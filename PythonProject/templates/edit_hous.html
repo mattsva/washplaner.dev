@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Edit House</h2>
+  <form method="POST" action="{{ url_for('edit_house', house_id=house.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="mb-3">
+      <label for="name">House Name</label>
+      <input class="form-control" type="text" name="name" value="{{ house.name }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="allowed_from">Allowed From (HH:MM)</label>
+      <input class="form-control" type="time" name="allowed_from" value="{{ house.allowed_from.strftime('%H:%M') }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="allowed_to">Allowed Until (HH:MM)</label>
+      <input class="form-control" type="time" name="allowed_to" value="{{ house.allowed_to.strftime('%H:%M') }}" required>
+    </div>
+
+    <button class="btn btn-success" type="submit">Save</button>
+    <a href="{{ url_for('admin') }}" class="btn btn-secondary">Back</a>
+  </form>
+</div>
+{% endblock %}

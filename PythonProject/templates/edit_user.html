@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Edit User</h2>
+  <form method="POST" action="{{ url_for('edit_user', user_id=user.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="mb-3">
+      <label for="username">Username</label>
+      <input class="form-control" type="text" name="username" value="{{ user.username }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="password">Password (leave empty to keep unchanged)</label>
+      <input class="form-control" type="password" name="password">
+    </div>
+
+    <div class="mb-3">
+      <label for="house_id">House</label>
+      <select class="form-control" name="house_id">
+        {% for house in houses %}
+          <option value="{{ house.id }}" {% if user.house_id == house.id %}selected{% endif %}>{{ house.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" name="is_admin" id="is_admin" {% if user.is_admin %}checked{% endif %}>
+      <label class="form-check-label" for="is_admin">Admin</label>
+    </div>
+
+    <button class="btn btn-success" type="submit">Save</button>
+    <a href="{{ url_for('admin') }}" class="btn btn-secondary">Back</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Admin Area</h2>
+
+<div class="row">
+  <!-- Users -->
+  <div class="col-md-4">
+    <div class="card p-3 mb-4 shadow-sm">
+      <h4>User Management</h4>
+      <table class="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>House</th>
+            <th>Admin</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.house.name if user.house else "-" }}</td>
+            <td>{{ "✅" if user.is_admin else "" }}</td>
+            <td>
+              <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn btn-sm btn-warning">Edit</a>
+              <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Add user form -->
+      <form method="POST" action="{{ url_for('create_user') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-2">
+          <input type="text" name="username" placeholder="Username" class="form-control" required>
+        </div>
+        <div class="mb-2">
+          <input type="password" name="password" placeholder="Password" class="form-control" required>
+        </div>
+        <div class="mb-2">
+          <select name="house_id" class="form-control">
+            {% for house in houses %}
+              <option value="{{ house.id }}">{{ house.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-check mb-2">
+          <input type="checkbox" name="is_admin" class="form-check-input" id="is_admin">
+          <label for="is_admin" class="form-check-label">Admin?</label>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Create User</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Houses -->
+  <div class="col-md-4">
+    <div class="card p-3 mb-4 shadow-sm">
+      <h4>Houses</h4>
+      <table class="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Allowed Times</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for house in houses %}
+          <tr>
+            <td>{{ house.name }}</td>
+            <td>{{ house.allowed_from.strftime("%H:%M") }} - {{ house.allowed_to.strftime("%H:%M") }}</td>
+            <td>
+              <a href="{{ url_for('edit_house', house_id=house.id) }}" class="btn btn-sm btn-warning">Edit</a>
+              <form method="POST" action="{{ url_for('delete_house', house_id=house.id) }}" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Add house form -->
+      <form method="POST" action="{{ url_for('create_house') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-2">
+          <input type="text" name="name" placeholder="House Name" class="form-control" required>
+        </div>
+        <div class="mb-2">
+          <input type="time" name="allowed_from" class="form-control" required>
+        </div>
+        <div class="mb-2">
+          <input type="time" name="allowed_to" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success w-100">Add House</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Appliances -->
+  <div class="col-md-4">
+    <div class="card p-3 mb-4 shadow-sm">
+      <h4>Appliances</h4>
+      <table class="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>House</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appliance in appliances %}
+          <tr>
+            <td>{{ appliance.name }}</td>
+            <td>{{ "Washer" if appliance.type == "washer" else "Dryer" }}</td>
+            <td>{{ appliance.house.name }}</td>
+            <td>
+              <a href="{{ url_for('edit_appliance', appliance_id=appliance.id) }}" class="btn btn-sm btn-warning">Edit</a>
+              <form method="POST" action="{{ url_for('delete_appliance', appliance_id=appliance.id) }}" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Add appliance form -->
+      <form method="POST" action="{{ url_for('create_appliance') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-2">
+          <input type="text" name="name" placeholder="Name" class="form-control" required>
+        </div>
+        <div class="mb-2">
+          <select name="type" class="form-control">
+            <option value="washer">Washer</option>
+            <option value="dryer">Dryer</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <select name="house_id" class="form-control">
+            {% for house in houses %}
+              <option value="{{ house.id }}">{{ house.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Add Appliance</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
